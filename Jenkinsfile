@@ -1,5 +1,8 @@
 pipeline {
-    label 'java-slave'
+    agent {
+        label 'java-slave'
+    }
+    
     tools {
         maven "maven-3.8.9"
     }
