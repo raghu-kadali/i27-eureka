@@ -10,8 +10,8 @@ pipeline {
     //environment
     environment {
         APPLICATION_NAME ="eureka"
-        SONAR_URL = "http://34.60.63.221:9000"
-        SONAR_TOKEN = credentials('sonar_creds')
+        SONAR_URL ="http://34.60.63.221:9000"
+        SONAR_TOKEN =credentials('sonar_creds')
     }
     stages {
         stage('Build') {
@@ -28,6 +28,7 @@ pipeline {
             -Dsonar.projectKey=i27-eureka \
             -Dsonar.host.url=${env.SONAR_URL}\
             -Dsonar.login=${env.SONAR_TOKEN}
+
         """
     }
 }
