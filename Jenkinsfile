@@ -29,6 +29,7 @@ pipeline {
                     -Dsonar.host.url=${env.SONAR_URL}\
                     -Dsonar.login=${env.SONAR_TOKEN}
 
+
                 """
             }
         }
