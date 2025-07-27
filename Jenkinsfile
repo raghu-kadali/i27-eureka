@@ -1,5 +1,5 @@
 pipeline {
-    agent 'jenkin-slave'
+    agent 'java-slave'
     tools {
         maven "maven-3.8.9"
     }
