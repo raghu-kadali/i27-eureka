@@ -14,7 +14,7 @@ pipeline {
         SONAR_TOKEN = credentials('sonar_creds')
     }
     stages {
-        stage('Build') {
+        stage('Build-application') {
             steps {
                 echo "This is ${env.APPLICATION_NAME} Application"
                 sh "mvn clean package -DskipTests=true" //if not test take moretime
