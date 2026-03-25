@@ -10,6 +10,8 @@ pipeline {
 
     environment {
         APPLICATION_NAME = 'Eureka' // Define an environment variable for the application name
+        SONAR_HOST_URL = 'http://35.188.126.241:9000'
+        SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
     }
 
     stages {
@@ -26,8 +28,8 @@ pipeline {
                 sh """ 
                 mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=i27-eureka \
-                        -Dsonar.host.url=http://35.188.126.241:9000 \
-                        -Dsonar.login=sqp_77ecc4726276900444fbab2f6bf125f8c9724be1
+                        -Dsonar.host.url=${env.SONAR_HOST_URL} \
+                        -Dsonar.login=${env.SONAR_LOGIN_TOKEN}
                 """ // Run the SonarQube analysis command
             }
         }
