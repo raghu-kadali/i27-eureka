@@ -26,7 +26,7 @@ pipeline {
             steps {
                 echo "*** starting sonarqube analysis"
                 sh """ 
-                mvn clean verify sonar:sonar \
+                    mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=i27-eureka \
                         -Dsonar.host.url=${env.SONAR_HOST_URL} \
                         -Dsonar.login=${env.SONAR_LOGIN_TOKEN}
