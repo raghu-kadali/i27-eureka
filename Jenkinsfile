@@ -5,7 +5,7 @@ pipeline {
 
     tools {
         maven 'maven-3.8.9' // Specify the Maven version to use
-        jdk 'JDK 17' // Specify the JDK version to use
+        jdk 'JDK-21' // Specify the JDK version to use
     }
 
     stages {
