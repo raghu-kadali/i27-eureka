@@ -17,7 +17,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo "***Building the ${env.APPLICATION_NAME} application"
+                echo "***Building ${env.APPLICATION_NAME} application"
                 sh "mvn clean package -DskipTests" // Run the Maven build command
             }
         }
