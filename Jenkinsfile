@@ -42,6 +42,11 @@ pipeline {
             }
         }
 
+        stage('Docker Build and Push') {
+            steps {
+                echo "*** Building Docker image and pushing to registry"
+            }
+
     }
 }
 
