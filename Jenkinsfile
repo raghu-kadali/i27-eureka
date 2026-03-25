@@ -10,7 +10,7 @@ pipeline {
 
     environment {
         APPLICATION_NAME = 'Eureka' // Define an environment variable for the application name
-        SONAR_HOST_URL = 'http://35.188.126.241:9000'
+        SONAR_HOST_URL = "http://35.188.126.241:9000"
         SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
     }
 
