@@ -8,24 +8,29 @@ pipeline {
         jdk 'JDK-21' // Specify the JDK version to use
     }
 
+    environment {
+        APPLICATION_NAME = 'Eureka' // Define an environment variable for the application name
+    }
+
     stages {
         stage('Build') {
             steps {
-                echo 'Building...'
+                echo "***Building the ${env.APPLICATION_NAME} application"
                 sh "mvn clean package" // Run the Maven build command
             }
         }
-        stage('Test') {
+        
+        stage('sonar') {
             steps {
-                echo 'Testing...'
-                // Add your test commands here
+                echo "*** starting sonarqube analysis"
+                sh """ 
+                mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=i27-eureka \
+                        -Dsonar.host.url=http://35.188.126.241:9000 \
+                        -Dsonar.login=sqp_77ecc4726276900444fbab2f6bf125f8c9724be1
+                """ // Run the SonarQube analysis command
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying...'
-                // Add your deploy commands here
-            }
-        }
+
     }
 }
