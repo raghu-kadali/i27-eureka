@@ -57,7 +57,7 @@ pipeline {
                  // git commit say pick the dynamic tak from github and use it as tag for docker image like  docker.io/dockerhubraghu/eureka:67fe3c471c1a2423edfedd3372cf3e3050154f1f
                  echo   "***************docker login*********************************** "
                  sh "docker login -u ${env.DOCKERHUB_CREDENTILAS_USR} -p ${env.DOCKERHUB_CREDENTILAS_PSW}" //usr and psw fetch etra we write
-                 echo ***************docker push************************************
+                 echo "***************docker push*********************************** "
                  sh "docker push ${env.DOCKERHUB}/${env.APPLICATION_NAME}:$GIT_COMMIT"
             }
         }
