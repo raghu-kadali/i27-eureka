@@ -12,6 +12,8 @@ pipeline {
         APPLICATION_NAME = 'Eureka'
         SONAR_HOST_URL = "http://35.188.126.241:9000"
         SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
+        POM_VERSION = readMavenPom().getVersion() //read pom and fetch the version that stores in one vatrible
+        POM_PACKAGING =readMavenPom().getPackaging() //read pom and fetch the packaging that stores in one vatrible
     }
 
     stages {
@@ -47,9 +49,10 @@ pipeline {
         stage('Docker Build and Push') {
             steps {
                 echo "*** Building Docker image and pushing to registry"
-                // Example Docker commands (optional)
-                // sh "docker build -t myrepo/${env.APPLICATION_NAME}:latest ."
-                // sh "docker push myrepo/${env.APPLICATION_NAME}:latest"
+                sh "cp target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
+                sh "docker build --build-arg JAR_SOURCE=i27-eureka-0.0.1-SNAPSHOT.jar -t eureka:v4 ./.cicd"
+                
+            
             }
         }
     }
