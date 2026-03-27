@@ -14,6 +14,8 @@ pipeline {
         SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
+        //
+        DOCKERHUB = "docker.io/dockerhubraghu"
     }
 
     stages {
@@ -49,7 +51,9 @@ pipeline {
             steps {
                 echo "*** Building Docker image and pushing to registry"
                 sh "cp target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
-                sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t eureka:v4 ./.cicd"
+               // sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t eureka:v4 ./.cicd"
+                 sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKERHUB}/${env.APPLICATION_NAME}:$GIT_COMMIT ./.cicd"
+                 // git commit say pick the dynamic tak from github
             }
         }
     }
