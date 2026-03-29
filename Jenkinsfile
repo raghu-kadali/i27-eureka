@@ -9,7 +9,7 @@ pipeline {
     }
 
     environment {
-        APPLICATION_NAME = 'Eureka'
+        APPLICATION_NAME = 'eureka'
         SONAR_HOST_URL = "http://35.188.126.241:9000"
         SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
         POM_VERSION = readMavenPom().getVersion() //read pom and fetch the version that stores in one vatrible
