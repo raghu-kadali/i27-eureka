@@ -67,7 +67,7 @@ pipeline {
             }
         }
 
-        stage(Depoy to dev env) {
+        stage('Deploy to dev env') {
             steps {
                 echo "*** Deploying Docker image to development environment"
                 // step1: connect js to dev env vm first
