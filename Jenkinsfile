@@ -14,7 +14,7 @@ pipeline {
         SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
         POM_VERSION = readMavenPom().getVersion() //read pom and fetch the version that stores in one vatrible
         POM_PACKAGING =readMavenPom().getPackaging() //read pom and fetch the packaging that stores in one vatrible
-        D
+    
      }
     }
 
@@ -66,6 +66,7 @@ pipeline {
                 // sh "docker push myrepo/${env.APPLICATION_NAME}:latest"
             }
         }
+    }
 
     //     stage('Deploy to dev env') {
     //         steps {
@@ -78,7 +79,7 @@ pipeline {
     //     }
     // }
     
-    }
+    
 
     
 
