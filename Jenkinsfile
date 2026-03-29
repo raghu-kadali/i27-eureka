@@ -72,15 +72,15 @@ pipeline {
                 // witcredentials actully pic from pipeline script to enter and add variable and pass to sh command
                 withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                    // sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"whoami\""
-                  // fisr time run: sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run -d -p 8761:8761 --name ${env.APPLICATION_NAME}-dev -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
+                  sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-dev -p 5761:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
                    // above command one time run second time run it will give error because container name is same so in realtime multiple time somechnages ecerytime not change image right so we can add one parameter stop,remove,recerate container if exist and run new one no error in docker only
                    // in realtime k8s deployment used because new changes  depaloyment convert new vesrion rs con paa etc
                    // stop the container
-                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker stop ${env.APPLICATION_NAME}-dev\""
-                   // remove the container
-                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker remove ${env.APPLICATION_NAME}-dev\""
-                     // run the container
-                     sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run -d -p 8761:8761 --name ${env.APPLICATION_NAME}-dev -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
+                //    sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker stop ${env.APPLICATION_NAME}-dev\""
+                //    // remove the container
+                //    sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker remove ${env.APPLICATION_NAME}-dev\""
+                //      // run the container
+                //      sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-dev -p 5761:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
 
 
                 }
