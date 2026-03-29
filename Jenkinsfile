@@ -1,21 +1,19 @@
-pipeline { 
+pipeline {
     agent {
-        label 'java-slave' // Agent label where pipeline will run
+        label 'java-slave'
     }
 
     tools {
-        maven 'maven-3.8.9' // Maven version
-        jdk 'JDK-21'        // JDK version
+        maven 'maven-3.8.9'
+        jdk 'JDK-21'
     }
 
     environment {
-        APPLICATION_NAME = 'Eureka'
+        APPLICATION_NAME = 'eureka'
         SONAR_HOST_URL = "http://35.188.126.241:9000"
         SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
-        POM_VERSION = readMavenPom().getVersion() //read pom and fetch the version that stores in one vatrible
-        POM_PACKAGING =readMavenPom().getPackaging() //read pom and fetch the packaging that stores in one vatrible
-    
-     }
+        POM_VERSION = readMavenPom().getVersion()
+        POM_PACKAGING = readMavenPom().getPackaging()
     }
 
     stages {
@@ -29,7 +27,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo "*** Starting SonarQube analysis"
-                withSonarQubeEnv('SonarQubeServer') { 
+                withSonarQubeEnv('SonarQubeServer') {
                     sh """
                         mvn clean verify sonar:sonar \
                             -Dsonar.projectKey=i27-eureka \
@@ -37,10 +35,7 @@ pipeline {
                             -Dsonar.login=${env.SONAR_LOGIN_TOKEN}
                     """
                 }
-
-                }
             }
-
             post {
                 always {
                     timeout(time: 1, unit: 'HOURS') {
@@ -48,27 +43,23 @@ pipeline {
                     }
                 }
             }
-        
+        }
 
-        stage ('formatBuild') {
+        stage('formatBuild') {
             steps {
                 echo "*** Formatting code using Spotless"
-                
             }
         }
 
         stage('Docker Build and Push') {
-        
             steps {
                 echo "*** Building Docker image and pushing to registry"
                 sh "cp target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
                 sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t myrepo/${env.APPLICATION_NAME}:$GIT_COMMIT ./.cicd"
-
-                // sh "docker build -t myrepo/${env.APPLICATION_NAME}:latest ."
-                // sh "docker push myrepo/${env.APPLICATION_NAME}:latest"
             }
         }
     }
+}
 
     //     stage('Deploy to dev env') {
     //         steps {
