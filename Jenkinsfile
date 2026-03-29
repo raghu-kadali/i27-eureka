@@ -64,6 +64,17 @@ pipeline {
                 sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT"
             }
         }
+
+        stage('Deploy to dev env') {
+            steps {
+                echo "*** Deploying Docker image to development environment"
+                // fisrt connect slave to dev vm because deployment done that place only docker pull and run command execute in dev vm
+                // witcredentials actully pic from pipeline script to enter and add variable and pass to sh command
+                withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    sh "sshpass -p ${PASSWORD} -v ssh -o strictHostKeyChecking=no ${USERNAME}@dev_environment_docker_vm_ip_address whoami"
+                }
+            }
+        }
     }
 }
 
