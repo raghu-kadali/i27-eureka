@@ -67,16 +67,14 @@ pipeline {
             }
         }
 
-        stage('Deploy to dev env') {
-            steps {
-                echo "*** Deploying Docker image to development environment"
-                // step1: connect js to dev env vm first
-                sshpass -p -v ssh -o strictHostKeyChecking=no username@ipadress
-                withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@ $ {docker_vm_ip} whoami"
-            }
+       stage('Deploy to dev env') {
+    steps {
+        echo "*** Deploying Docker image to development environment"
+        withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+            sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_vm_ip} whoami"
         }
-        }
+    }
+}
 
     }
     
