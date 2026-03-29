@@ -1,22 +1,21 @@
 pipeline {
     agent {
-        label 'java-slave'
+        label 'java-slave' // Agent label where pipeline will run
     }
 
     tools {
-        maven 'maven-3.8.9'
-        jdk 'JDK-21'
+        maven 'maven-3.8.9' // Maven version
+        jdk 'JDK-21'        // JDK version
     }
 
     environment {
-        APPLICATION_NAME = 'eureka'
+        APPLICATION_NAME = 'Eureka'
         SONAR_HOST_URL = "http://35.188.126.241:9000"
         SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
-        POM_VERSION = readMavenPom().getVersion()
-        POM_PACKAGING = readMavenPom().getPackaging()
-        //
-        DOCKERHUB = "docker.io/dockerhubraghu"
-        DOCKERHUB_CREDENTILAS = credentials('raghu_dockerhub_creds')
+        POM_VERSION = readMavenPom().getVersion() //read pom and fetch the version that stores in one vatrible
+        POM_PACKAGING =readMavenPom().getPackaging() //read pom and fetch the packaging that stores in one vatrible
+
+     }
     }
 
     stages {
@@ -30,16 +29,17 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo "*** Starting SonarQube analysis"
-                withSonarQubeEnv('SonarQubeServer') {
+                withSonarQubeEnv('SonarQubeServer') { 
                     sh """
                         mvn clean verify sonar:sonar \
                             -Dsonar.projectKey=i27-eureka \
                             -Dsonar.host.url=${env.SONAR_HOST_URL} \
-                            -Dsonar.token=${env.SONAR_LOGIN_TOKEN}
+                            -Dsonar.login=${env.SONAR_LOGIN_TOKEN}
                     """
                 }
             }
-            post {                              // ✅ Fixed — post at stage level
+
+            post {
                 always {
                     timeout(time: 1, unit: 'HOURS') {
                         waitForQualityGate abortPipeline: true
@@ -48,18 +48,57 @@ pipeline {
             }
         }
 
+        stage ('formatBuild') {
+            steps {
+                echo "*** Formatting code using Spotless"
+                
+            }
+        }
+
         stage('Docker Build and Push') {
+        
             steps {
                 echo "*** Building Docker image and pushing to registry"
                 sh "cp target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
-               // sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t eureka:v4 ./.cicd"
-                 sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKERHUB}/${env.APPLICATION_NAME}:$GIT_COMMIT ./.cicd"
-                 // git commit say pick the dynamic tak from github and use it as tag for docker image like  docker.io/dockerhubraghu/eureka:67fe3c471c1a2423edfedd3372cf3e3050154f1f
-                 echo   "***************docker login*********************************** "
-                 sh "docker login -u ${env.DOCKERHUB_CREDENTILAS_USR} -p ${env.DOCKERHUB_CREDENTILAS_PSW}" //usr and psw fetch etra we write
-                 echo "***************docker push*********************************** "
-                 sh "docker push ${env.DOCKERHUB}/${env.APPLICATION_NAME}:$GIT_COMMIT"
+                sh "docker build -build-arg JAR_SOURCE=i27-eureka-0.0.1-SNAPSHOT.jar -t eureka:v4 /.cicd"
+
+                // sh "docker build -t myrepo/${env.APPLICATION_NAME}:latest ."
+                // sh "docker push myrepo/${env.APPLICATION_NAME}:latest"
             }
         }
+
+        stage(Depoy to dev env) {
+            steps {
+                echo "*** Deploying Docker image to development environment"
+                // step1: connect js to dev env vm first
+                sshpass -p -v ssh -o strictHostKeyChecking=no username@ipadress
+                withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@ $ {docker_vm_ip} whoami"
+            }
+        }
+        }
+
     }
-}
+    
+
+
+
+
+// pipeline {
+//     environment {
+//         Application _Name = 'Eureka'
+//        POM_VERSION = readMavenPom().getVersion() //read pom and fetch the version that stores in one vatrible
+//        POM_PACKAGING =readMavenPom().getPackaging() //read pom and fetch the packaging that stores in one vatrible
+//     }
+//     stages {
+//         stage('FormatBuild') {
+//             // existsing i27-eureka-0.0.1-SNAPSHOT.jar
+//             // Destination: i27-eureka-buildnumber-brachname.jar
+//             steps {
+//                 echo " testing existing jar is i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING}"
+//                 echo "testing jar destination is i27-${env.APPLICATION_NAME}-${env.BUILD_NUMBER}-${env.BRANCH_NAME}.${env.POM_PACKAGING}"
+              
+//             }
+//         }
+//     }
+// }
