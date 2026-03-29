@@ -1,4 +1,4 @@
-pipeline {
+pipeline { 
     agent {
         label 'java-slave' // Agent label where pipeline will run
     }
@@ -37,6 +37,8 @@ pipeline {
                             -Dsonar.login=${env.SONAR_LOGIN_TOKEN}
                     """
                 }
+
+                }
             }
 
             post {
@@ -46,7 +48,7 @@ pipeline {
                     }
                 }
             }
-        }
+        
 
         stage ('formatBuild') {
             steps {
