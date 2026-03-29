@@ -87,7 +87,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to test env') { # but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
+        stage('Deploy to test env') { // but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
               // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
             steps {
                 echo "*** Deploying Docker image to test environment"
