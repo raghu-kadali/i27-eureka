@@ -16,7 +16,7 @@ pipeline {
         POM_PACKAGING =readMavenPom().getPackaging() //read pom and fetch the packaging that stores in one vatrible
 
      }
-    }
+    
 
     stages {
         stage('Build') {
@@ -74,9 +74,8 @@ pipeline {
             sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_vm_ip} whoami"
         }
     }
+      }
 }
-
-    }
     
 
 
