@@ -66,6 +66,8 @@ pipeline {
                 // sh "docker push myrepo/${env.APPLICATION_NAME}:latest"
             }
         }
+    }
+}
 
     //    stage('Deploy to dev env') {
     // steps {
@@ -75,6 +77,6 @@ pipeline {
     //     }
     // }
     //   }
-}
+
     
 
