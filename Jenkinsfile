@@ -77,25 +77,4 @@ pipeline {
       }
 }
     
-
-
-
-
-// pipeline {
-//     environment {
-//         Application _Name = 'Eureka'
-//        POM_VERSION = readMavenPom().getVersion() //read pom and fetch the version that stores in one vatrible
-//        POM_PACKAGING =readMavenPom().getPackaging() //read pom and fetch the packaging that stores in one vatrible
-//     }
-//     stages {
-//         stage('FormatBuild') {
-//             // existsing i27-eureka-0.0.1-SNAPSHOT.jar
-//             // Destination: i27-eureka-buildnumber-brachname.jar
-//             steps {
-//                 echo " testing existing jar is i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING}"
-//                 echo "testing jar destination is i27-${env.APPLICATION_NAME}-${env.BUILD_NUMBER}-${env.BRANCH_NAME}.${env.POM_PACKAGING}"
-              
-//             }
-//         }
-//     }
-// }
+}
