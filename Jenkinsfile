@@ -87,23 +87,26 @@ pipeline {
             }
         }
 
-        stage('Deploy to test env') {
+        stage('Deploy to test env') { # but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
+              // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
             steps {
-                echo "*** Deploying Docker image to development environment"
-                // fisrt connect slave to dev vm because deployment done that place only docker pull and run command execute in dev vm
-                // witcredentials actully pic from pipeline script to enter and add variable and pass to sh command
+                echo "*** Deploying Docker image to test environment"
+            
                 withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                   // sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"whoami\""
-                   //sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-dev -p 5761:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
-                   // above command one time run second time run it will give error because container name is same so in realtime multiple time somechnages ecerytime not change image right so we can add one parameter stop,remove,recerate container if exist and run new one no error in docker only
-                   // in realtime k8s deployment used because new changes  depaloyment convert new vesrion rs con paa etc
-                   // stop the container
+                  
+                   script {
+                    try {
+                    // stop the container
                    sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker stop ${env.APPLICATION_NAME}-test\""
                    // remove the container
                    sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker rm ${env.APPLICATION_NAME}-test\""
-                     // craete and run the container
+                    } 
+                    catch (error) {
+                        echo "Container ${env.APPLICATION_NAME}-test does not exist, skipping stop and remove steps."
+                    }
+                    // craete and run the container
                    sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-test -p 5761:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
-
+                   }
 
                 }
             }
