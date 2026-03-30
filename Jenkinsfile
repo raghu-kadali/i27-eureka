@@ -139,6 +139,11 @@ pipeline {
                 anyOf {
                         expression { params.deploy_to_stage == 'yes' }
                 }
+
+                anyOf {
+                    branch 'release/*'
+                      tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}", comparator: "REGEXP"
+                }
             }
             steps {
                 script {
@@ -154,6 +159,9 @@ pipeline {
             when {
                 anyOf {
                         expression { params.deploy_to_prod == 'yes' }
+                }
+                anyOf {
+                      tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}", comparator: "REGEXP"
                 }
             }
             steps {
