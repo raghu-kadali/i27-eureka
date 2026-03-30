@@ -55,13 +55,9 @@ pipeline {
 
         stage('Docker Build and Push') {
             steps {
-                echo "*** Building Docker image and pushing to registry"
-                sh "cp target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
-                sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT ./.cicd"
-                echo "*** logging into docker registry***"
-                sh "docker login -u ${DOCKER_CREDENTIALS_USR} -p ${DOCKER_CREDENTIALS_PSW}"
-                echo "*** pushing docker image to registry***"
-                sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT"
+                script {
+                    dockerBuildandPush().call()
+                }
             }
         }
 
@@ -130,7 +126,18 @@ def dockerDeploy(envDeploy,port) {
     }
 }
     
-
+// we can also simply write docker build and push just mention metond and call
+def dockerBuildandPush() {
+    return {
+        echo "*** Building Docker image and pushing to registry"
+        sh "cp target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
+        sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT ./.cicd"
+        echo "*** logging into docker registry***"
+        sh "docker login -u ${DOCKER_CREDENTIALS_USR} -p ${DOCKER_CREDENTIALS_PSW}"
+        echo "*** pushing docker image to registry***"
+        sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT"
+    }
+}
     
 
 
