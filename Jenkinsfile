@@ -18,8 +18,36 @@ pipeline {
         DOCKER_CREDENTIALS = credentials('raghu_dockerhub_creds')
     }
 
+   // parametes: used to tale imnput
+   
+    parameters {
+        choice(name: 'build_only', 
+              choices: ['yes', 'no'], description: 'Build only')
+        choice(name: 'docker_build_and_push', 
+             choices: ['yes', 'no'], description: 'Build and push Docker image')
+        choice(name: 'deploy_to_dev', 
+             choices: ['yes', 'no'], description: 'Deploy to dev environment')  
+        choice(name: 'deploy_to_test', 
+             choices: ['yes', 'no'], description: 'Deploy to test environment') 
+        choice(name: 'deploy_to_stage', 
+             choices: ['yes', 'no'], description: 'Deploy to stage environment')
+        choice(name: 'deploy_to_prod',
+             choices: ['yes', 'no'], description: 'Deploy to prod environment')
+
+
+    }
+
     stages {
         stage('Build') {
+           / / writing when condition for each satge level only by use parameter input
+           when {
+                anyOf { // if any  one do we mandatory fuest build and docker build and push 
+                    expression { params.build_only == 'yes' }
+                    expression { params.docker_build_and_push == 'yes' }
+                   
+                }
+
+           }
             steps {
                 echo "*** Building ${env.APPLICATION_NAME} application"
                 sh "mvn clean package -DskipTests"
@@ -47,13 +75,19 @@ pipeline {
             }
         }
 
-        stage('formatBuild') {
-            steps {
-                echo "*** Formatting code using Spotless"
-            }
-        }
+        // stage('formatBuild') {
+        //     steps {
+        //         echo "*** Formatting code using Spotless"
+        //     }
+        // }
 
         stage('Docker Build and Push') {
+                when {
+                    anyOf { //if only push do ok
+    
+                        expression { params.docker_build_and_push == 'yes' }
+                    }
+                }       
             steps {
                 script {
                     dockerBuildandPush().call()
@@ -62,6 +96,11 @@ pipeline {
         }
 
         stage('Deploy to dev env') {
+            when {
+                anyOf {
+                        expression { params.deploy_to_dev == 'yes' }
+                }
+            }
             steps {
                 script {
                     dockerDeploy('dev',5666).call()
@@ -70,8 +109,12 @@ pipeline {
             }
         }
 
-        stage('Deploy to test env') { // but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
-              // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
+        stage('Deploy to test env') { 
+            when {
+                anyOf {
+                        expression { params.deploy_to_test == 'yes' }
+                }
+            }
             steps {
                script {
                     dockerDeploy('test',5661).call()
@@ -79,8 +122,12 @@ pipeline {
             }
         }
 
-        stage('Deploy to stagee env') { // but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
-              // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
+        stage('Deploy to stagee env') {
+            when {
+                anyOf {
+                        expression { params.deploy_to_stage == 'yes' }
+                }
+            }
             steps {
                 script {
                       dockerDeploy('stage',5662).call()
@@ -88,8 +135,12 @@ pipeline {
             }
         }
 
-        stage('Deploy to prod') { // but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
-              // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
+        stage('Deploy to prod') { 
+            when {
+                anyOf {
+                        expression { params.deploy_to_prod == 'yes' }
+                }
+            }
             steps {
                 script {
                       dockerDeploy('prod',5663).call()
