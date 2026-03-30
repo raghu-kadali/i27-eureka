@@ -39,7 +39,7 @@ pipeline {
 
     stages {
         stage('Build') {
-           / / writing when condition for each satge level only by use parameter input
+           //writing when condition for each satge level only by use parameter input
            when {
                 anyOf { // if any  one do we mandatory fuest build and docker build and push 
                     expression { params.build_only == 'yes' }
