@@ -156,6 +156,9 @@ pipeline {
         }
 
         stage('Deploy to prod') { 
+            // approvals neede?
+            //brnach and tag condition
+            //we also wrote sometime timeout with in 5 min approve and deploy other wise stop.
             when {
                 anyOf {
                         expression { params.deploy_to_prod == 'yes' }
@@ -164,7 +167,10 @@ pipeline {
                       tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}", comparator: "REGEXP"
                 }
             }
-            steps {
+            steps { //omly few people push
+                timeout(time: 1800, unit: 'SECONDS') {
+                     input message: 'Deploy to production?', ok: 'Deploy', submitter: 'raghu, madhu'
+                }
                 script {
                      
                       dockerDeploy('prod',5663).call()
