@@ -68,7 +68,7 @@ pipeline {
         stage('Deploy to dev env') {
             steps {
                 script {
-                    dockerDeploy('dev',5770).call()
+                    dockerDeploy('dev',5666).call()
                 }
                 
             }
@@ -78,7 +78,7 @@ pipeline {
               // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
             steps {
                script {
-                    dockerDeploy('test',5980).call()
+                    dockerDeploy('test',5661).call()
                 }
             }
         }
@@ -87,7 +87,7 @@ pipeline {
               // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
             steps {
                 script {
-                      dockerDeploy('stage',5870).call()
+                      dockerDeploy('stage',5662).call()
                  }
             }
         }
@@ -96,7 +96,7 @@ pipeline {
               // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
             steps {
                 script {
-                      dockerDeploy('prod',8761).call()
+                      dockerDeploy('prod',5663).call()
                  }
             }
         }
