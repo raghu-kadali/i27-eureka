@@ -50,9 +50,10 @@ pipeline {
                 }
 
            }
-            steps {
-                echo "*** Building ${env.APPLICATION_NAME} application"
-                sh "mvn clean package -DskipTests"
+            steps { //call the method to build the application
+                script {
+                    buildapp().call()
+                }
             }
         }
 
@@ -110,6 +111,8 @@ pipeline {
             }
             steps {
                 script {
+                    buildapp().call()
+                    imagevalidation().call()
                     dockerDeploy('dev',5666).call()
                 }
                 
@@ -124,12 +127,14 @@ pipeline {
             }
             steps {
                script {
+                    buildapp().call()
+                    imagevalidation().call()
                     dockerDeploy('test',5661).call()
                 }
             }
         }
 
-        stage('Deploy to stagee env') {
+        stage('Deploy to stage env') {
             when {
                 anyOf {
                         expression { params.deploy_to_stage == 'yes' }
@@ -137,7 +142,10 @@ pipeline {
             }
             steps {
                 script {
-                      dockerDeploy('stage',5662).call()
+                    //image validation
+                    buildapp().call()  
+                    imagevalidation().call() 
+                    dockerDeploy('stage',5662).call()
                  }
             }
         }
@@ -150,6 +158,7 @@ pipeline {
             }
             steps {
                 script {
+                     
                       dockerDeploy('prod',5663).call()
                  }
             }
@@ -157,6 +166,24 @@ pipeline {
         
     }
 }
+
+
+
+
+
+// ----------------------------------------------------------------------------------------------------
+
+def buildapp(){
+    return {
+        echo "*** Building ${env.APPLICATION_NAME} application"
+        sh "mvn clean package -DskipTests"
+    }
+}
+
+
+
+
+
 
 // define method
 //envDeploy,port is a variable
@@ -196,7 +223,21 @@ def dockerBuildandPush() {
         sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT"
     }
 }
-    
+
+def imagevalidation() {
+    return {
+        println ("*** Validating Docker image in registry ***")
+        try {
+            sh "docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT"
+            echo "*** Docker image validation successful ***"
+        } catch (error) { 
+            println (*****docker image not availble in registry, so we create and push the image to registry***)
+            buildapp().call()  //OK BUILD APP FIRST 
+            dockerBuildandPush().call() // THEN CALL THE DOCKER BUILD and push method  
+        }
+
+    }
+}
 
 
 
