@@ -23,6 +23,8 @@ pipeline {
     parameters {
         choice(name: 'build_only', 
               choices: ['yes', 'no'], description: 'Build only')
+        choice(name: 'SonarQube_Analysis', 
+              choices: ['yes', 'no'], description: 'Perform SonarQube analysis')
         choice(name: 'docker_build_and_push', 
              choices: ['yes', 'no'], description: 'Build and push Docker image')
         choice(name: 'deploy_to_dev', 
@@ -41,7 +43,7 @@ pipeline {
         stage('Build') {
            //writing when condition for each satge level only by use parameter input
            when {
-                anyOf { // if any  one do we mandatory fuest build and docker build and push 
+                anyOf { // if any  one of the condition is true then only stage will execute
                     expression { params.build_only == 'yes' }
                     expression { params.docker_build_and_push == 'yes' }
                    
@@ -55,6 +57,11 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
+            when {
+                anyOf { 
+                    expression { params.SonarQube_Analysis == 'yes' }
+                }
+            }
             steps {
                 echo "*** Starting SonarQube analysis"
                 withSonarQubeEnv('SonarQubeServer') {
