@@ -67,64 +67,68 @@ pipeline {
 
         stage('Deploy to dev env') {
             steps {
-                echo "*** Deploying Docker image to development environment"
-                // fisrt connect slave to dev vm because deployment done that place only docker pull and run command execute in dev vm
-                // witcredentials actully pic from pipeline script to enter and add variable and pass to sh command
-                withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                   // sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"whoami\""
-                   //sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-dev -p 5761:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
-                   // above command one time run second time run it will give error because container name is same so in realtime multiple time somechnages ecerytime not change image right so we can add one parameter stop,remove,recerate container if exist and run new one no error in docker only
-                   // in realtime k8s deployment used because new changes  depaloyment convert new vesrion rs con paa etc
-                   // stop the container
-                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker stop ${env.APPLICATION_NAME}-dev\""
-                   // remove the container
-                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker rm ${env.APPLICATION_NAME}-dev\""
-                     // craete and run the container
-                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-dev -p 5761:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
-
-
+                script {
+                    dockerDeploy('dev',5770).call()
                 }
+                
             }
         }
 
         stage('Deploy to test env') { // but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
               // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
             steps {
-                echo "*** Deploying Docker image to test environment"
+               script {
+                    dockerDeploy('test',5980).call()
+                }
+            }
+        }
+
+        stage('Deploy to satge env') { // but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
+              // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
+            steps {
+                script {
+                      dockerDeploy('stage',5870).call()
+                 }
+            }
+        }
+
+        stage('Deploy to prod') { // but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
+              // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
+            steps {
+                script {
+                      dockerDeploy('prod',8761).call()
+                 }
+            }
+        }
+        
+    }
+}
+
+// define method
+//envDeploy,port is a variable
+def dockerDeploy(envDeploy,port) {
+    return {
+        echo "*** Deploying Docker image to test environment"
             
                 withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                   
                    script {
                     try {
                     // stop the container
-                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker stop ${env.APPLICATION_NAME}-test\""
+                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker stop ${env.APPLICATION_NAME}-${envDeploy}\""
                    // remove the container
-                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker rm ${env.APPLICATION_NAME}-test\""
+                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker rm ${env.APPLICATION_NAME}-${envDeploy}\""
                     } 
                     catch (error) {
-                        echo "Container ${env.APPLICATION_NAME}-test does not exist, skipping stop and remove steps."
+                        echo "Container ${env.APPLICATION_NAME}-${envDeploy} does not exist, skipping stop and remove steps."
                     }
                     // craete and run the container
-                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-test -p 5771:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
+                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-prod -p $port:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
                    }
 
                 }
-            }
-        }
     }
 }
-
-    //     stage('Deploy to dev env') {
-    //         steps {
-    //             echo "*** Deploying Docker image to development environment"
-    //             // step1: connect js to dev env vm first
-    //             sshpass -p -v ssh -o strictHostKeyChecking=no username@ipadress
-    //             withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-    //                 sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@"
-    //         }
-    //     }
-    // }
-    
     
 
     
