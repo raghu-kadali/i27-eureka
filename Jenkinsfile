@@ -83,7 +83,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to satge env') { // but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
+        stage('Deploy to stagee env') { // but its fail above dev on;ly exisisting cotainer remove,stop and create  incase first time container create  get error like these how 
               // so we solve by using some condition called try catch block in sh command to handle error and continue execution.
             steps {
                 script {
@@ -123,7 +123,7 @@ def dockerDeploy(envDeploy,port) {
                         echo "Container ${env.APPLICATION_NAME}-${envDeploy} does not exist, skipping stop and remove steps."
                     }
                     // craete and run the container
-                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-prod -p $port:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
+                   sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker run --name ${env.APPLICATION_NAME}-${envDeploy} -p $port:8761 -d ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT\""
                    }
 
                 }
