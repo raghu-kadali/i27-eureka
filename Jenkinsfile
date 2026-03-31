@@ -21,7 +21,7 @@ pipeline {
    // parametes: used to tale imnput
    
     parameters {
-        choice(name: 'build_only', 
+        choice(name: 'build_only', // it creates dropdown to user in jenkins ui build parameters
               choices: ['yes', 'no'], description: 'Build only')
         choice(name: 'SonarQube_Analysis', 
               choices: ['yes', 'no'], description: 'Perform SonarQube analysis')
@@ -102,7 +102,7 @@ pipeline {
                 }
             }
         }
-
+// ---------------------------------------------------------------
         stage('Deploy to dev env') {
             when {
                 anyOf {
@@ -118,7 +118,7 @@ pipeline {
                 
             }
         }
-
+//---------------------------------------------------------------
         stage('Deploy to test env') { 
             when {
                 anyOf {
@@ -133,7 +133,7 @@ pipeline {
                 }
             }
         }
-
+//---------------------------------------------------------------
         stage('Deploy to stage env') {
             when {
                 anyOf {
@@ -154,7 +154,7 @@ pipeline {
                  }
             }
         }
-
+//---------------------------------------------------------------
         stage('Deploy to prod') { 
             // approvals neede?
             //brnach and tag condition
@@ -167,9 +167,9 @@ pipeline {
                       tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}", comparator: "REGEXP"
                 }
             }
-            steps { //omly few people push
+            steps { //omly few people push by input mechanism implemented
                 timeout(time: 1800, unit: 'SECONDS') {
-                     input message: 'Deploy to production?', ok: 'Deploy', submitter: 'raghu, madhu'
+                       input message: 'Deploy to production?', ok: 'Deploy', submitter: 'raghu, madhu'
                 }
                 script {
                      
