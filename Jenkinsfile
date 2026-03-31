@@ -22,19 +22,19 @@ pipeline {
    
     parameters {
         choice(name: 'build_only', // it creates dropdown to user in jenkins ui build parameters
-              choices: ['yes', 'no'], description: 'Build only')
+              choices: ['no', 'yes'], description: 'Build only') //first write 'no' takes default value
         choice(name: 'SonarQube_Analysis', 
-              choices: ['yes', 'no'], description: 'Perform SonarQube analysis')
+              choices: ['no', 'yes'], description: 'Perform SonarQube analysis')
         choice(name: 'docker_build_and_push', 
-             choices: ['yes', 'no'], description: 'Build and push Docker image')
+             choices: ['no', 'yes'], description: 'Build and push Docker image')
         choice(name: 'deploy_to_dev', 
-             choices: ['yes', 'no'], description: 'Deploy to dev environment')  
+             choices: ['no', 'yes'], description: 'Deploy to dev environment')  
         choice(name: 'deploy_to_test', 
-             choices: ['yes', 'no'], description: 'Deploy to test environment') 
+             choices: ['no', 'yes'], description: 'Deploy to test environment') 
         choice(name: 'deploy_to_stage', 
-             choices: ['yes', 'no'], description: 'Deploy to stage environment')
+             choices: ['no', 'yes'], description: 'Deploy to stage environment')
         choice(name: 'deploy_to_prod',
-             choices: ['yes', 'no'], description: 'Deploy to prod environment')
+             choices: ['no', 'yes'], description: 'Deploy to prod environment')
 
 
     }
