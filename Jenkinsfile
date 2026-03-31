@@ -50,7 +50,7 @@ pipeline {
                 }
 
            }
-            steps { //call the method to build the application
+            steps { // if build application we need to call method : that method build steps available.
                 script {
                     buildapp().call()
                 }
@@ -174,7 +174,7 @@ pipeline {
                 script {
                      
                       dockerDeploy('prod',5663).call()
-                 }
+                 } 
             }
         }
         
@@ -185,7 +185,7 @@ pipeline {
 
 
 
-// ----------------------------------------------------------------------------------------------------
+// ------------------------***-these actual methods we write here to call in above stages to implement the every stage in pipeline simply and multiple tiems clal these methods******* ---------------------------------------------------------------------------
 
 def buildapp(){
     return {
@@ -194,6 +194,21 @@ def buildapp(){
     }
 }
 
+    
+// we can also simply write docker build and push just mention metond and call
+def dockerBuildandPush() {
+    return {
+        echo "*** Building Docker image and pushing to registry"
+        sh "cp target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
+        // these line explination under doubts section
+        sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT ./.cicd"
+        echo "*** logging into docker registry ***"
+        //logins not hardcodesStored safely in Jenkins Credentials Manager
+        sh "docker login -u ${DOCKER_CREDENTIALS_USR} -p ${DOCKER_CREDENTIALS_PSW}"
+        echo "*** pushing docker image to registry***"
+        sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT"
+    }
+}
 
 
 
@@ -204,7 +219,8 @@ def buildapp(){
 def dockerDeploy(envDeploy,port) {
     return {
         echo "*** Deploying Docker image to test environment"
-            
+                // fisrt you connect the dev serever using these withcredentials :, then stop the container if exist, remove the container if exist, then create and run the container
+                //  how to secure docker credentilas using withcreds block
                 withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                   
                    script {
@@ -224,19 +240,6 @@ def dockerDeploy(envDeploy,port) {
                 }
     }
 }
-    
-// we can also simply write docker build and push just mention metond and call
-def dockerBuildandPush() {
-    return {
-        echo "*** Building Docker image and pushing to registry"
-        sh "cp target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd"
-        sh "docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT ./.cicd"
-        echo "*** logging into docker registry***"
-        sh "docker login -u ${DOCKER_CREDENTIALS_USR} -p ${DOCKER_CREDENTIALS_PSW}"
-        echo "*** pushing docker image to registry***"
-        sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:$GIT_COMMIT"
-    }
-}
 
 def imagevalidation() {
     return {
@@ -252,6 +255,17 @@ def imagevalidation() {
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
