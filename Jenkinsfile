@@ -218,7 +218,7 @@ def dockerBuildandPush() {
 //envDeploy,port is a variable
 def dockerDeploy(envDeploy,port) {
     return {
-        echo "*** Deploying Docker image to test environment"
+        echo "*** Deploying Docker image to  environment"
                 // fisrt you connect the dev serever using these withcredentials :, then stop the container if exist, remove the container if exist, then create and run the container
                 //  how to secure docker credentilas using withcreds block
                 withCredentials([usernamePassword(credentialsId: 'dev_madhu_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
