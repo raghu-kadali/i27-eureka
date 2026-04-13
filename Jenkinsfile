@@ -226,6 +226,7 @@ def dockerDeploy(envDeploy,port) {
                    script {
                     try {
                     // stop the container
+                    // vmipaddress is pvt ip placed in manage jenkins syyste environment varbles name and pvt ip address placed in that variable
                    sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker stop ${env.APPLICATION_NAME}-${envDeploy}\""
                    // remove the container
                    sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker rm ${env.APPLICATION_NAME}-${envDeploy}\""
