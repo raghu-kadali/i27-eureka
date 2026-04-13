@@ -10,8 +10,8 @@ pipeline {
 
     environment {
         APPLICATION_NAME = 'eureka'
-        SONAR_HOST_URL = "http://35.188.126.241:9000"
-        SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
+        // SONAR_HOST_URL = "http://35.188.126.241:9000"
+        // SONAR_LOGIN_TOKEN = credentials('raghu_sonar_creds')
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
         DOCKER_HUB = "docker.io/dockerhubraghu"
@@ -23,8 +23,8 @@ pipeline {
     parameters {
         choice(name: 'build_only', // it creates dropdown to user in jenkins ui build parameters
               choices: ['yes', 'no'], description: 'Build only') //first write 'no' takes default value
-        choice(name: 'SonarQube_Analysis', 
-              choices: ['yes', 'no'], description: 'Perform SonarQube analysis')
+        // choice(name: 'SonarQube_Analysis', 
+        //       choices: ['yes', 'no'], description: 'Perform SonarQube analysis')
         choice(name: 'docker_build_and_push', 
              choices: ['yes', 'no'], description: 'Build and push Docker image')
         choice(name: 'deploy_to_dev', 
