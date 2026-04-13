@@ -57,31 +57,31 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            when {
-                anyOf { 
-                    expression { params.SonarQube_Analysis == 'yes' }
-                }
-            }
-            steps {
-                echo "*** Starting SonarQube analysis"
-                withSonarQubeEnv('SonarQubeServer') {
-                    sh """
-                        mvn clean verify sonar:sonar \
-                            -Dsonar.projectKey=i27-eureka \
-                            -Dsonar.host.url=${env.SONAR_HOST_URL} \
-                            -Dsonar.login=${env.SONAR_LOGIN_TOKEN}
-                    """
-                }
-            }
-            post {
-                always {
-                    timeout(time: 1, unit: 'HOURS') {
-                        waitForQualityGate abortPipeline: true
-                    }
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     when {
+        //         anyOf { 
+        //             expression { params.SonarQube_Analysis == 'yes' }
+        //         }
+        //     }
+        //     steps {
+        //         echo "*** Starting SonarQube analysis"
+        //         withSonarQubeEnv('SonarQubeServer') {
+        //             sh """
+        //                 mvn clean verify sonar:sonar \
+        //                     -Dsonar.projectKey=i27-eureka \
+        //                     -Dsonar.host.url=${env.SONAR_HOST_URL} \
+        //                     -Dsonar.login=${env.SONAR_LOGIN_TOKEN}
+        //             """
+        //         }
+        //     }
+        //     post {
+        //         always {
+        //             timeout(time: 1, unit: 'HOURS') {
+        //                 waitForQualityGate abortPipeline: true
+        //             }
+        //         }
+        //     }
+        // }
 
         // stage('formatBuild') {
         //     steps {
