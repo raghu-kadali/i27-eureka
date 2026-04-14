@@ -140,9 +140,7 @@ pipeline {
                         expression { params.deploy_to_stage == 'yes' }
                 }
 
-                anyOf {
-                    branch 'release/*'
-                      tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}", comparator: "REGEXP"
+             cc
                 }
             }
             steps {
@@ -179,7 +177,6 @@ pipeline {
         }
         
     }
-}
 
 
 
