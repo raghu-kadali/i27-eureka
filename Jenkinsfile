@@ -24,7 +24,7 @@ pipeline {
         choice(name: 'build_only', // it creates dropdown to user in jenkins ui build parameters
               choices: ['yes', 'no'], description: 'Build only') //first write 'no' takes default value
         // choice(name: 'SonarQube_Analysis', 
-        //       choices: ['yes', 'no'], description: 'Perform SonarQube analysis')
+        // choices: ['yes', 'no'], description: 'Perform SonarQube analysis')
         choice(name: 'docker_build_and_push', 
              choices: ['yes', 'no'], description: 'Build and push Docker image')
         choice(name: 'deploy_to_dev', 
