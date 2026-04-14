@@ -140,7 +140,9 @@ pipeline {
                         expression { params.deploy_to_stage == 'yes' }
                 }
 
-             cc
+                anyOf {
+                    branch 'release/*'
+                      tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}", comparator: "REGEXP"
                 }
             }
             steps {
@@ -177,6 +179,7 @@ pipeline {
         }
         
     }
+}
 
 
 
@@ -223,7 +226,7 @@ def dockerDeploy(envDeploy,port) {
                    script {
                     try {
                     // stop the container
-                    // vmipaddress is pvt ip placed in manage jenkins syyste environment varbles name and pvt ip address placed in that variable
+                    // vmipaddress is pvt ip placed in manage jenkins syyste environment varbles name and pvt ip
                    sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker stop ${env.APPLICATION_NAME}-${envDeploy}\""
                    // remove the container
                    sh "sshpass -p $PASSWORD -v ssh -o StrictHostKeyChecking=no $USERNAME@$docker_vm_ip_address \"docker rm ${env.APPLICATION_NAME}-${envDeploy}\""
