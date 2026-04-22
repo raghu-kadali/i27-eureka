@@ -1,6 +1,6 @@
 // icall shared library
 @Library("com.i27-academy.slb") _
-dockerPipeline(
+dockerpipeline(
     appName: "eureka"
 
 )
