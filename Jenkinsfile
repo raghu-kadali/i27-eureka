@@ -1,6 +1,6 @@
 // icall shared library
 @Library("com.i27-academy.slb") _
-k8spipelinegroovy(
+k8spipeline(
     app_Name: "eureka"
 
 )
