@@ -1,5 +1,5 @@
 // icall shared library
-@Library("com.i27-academy.slb") _
+@Library("com.i27academy.slb") _
 k8spipeline(
     app_Name: "eureka"
 
