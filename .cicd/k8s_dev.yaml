@@ -1,40 +1,35 @@
 apiVersion: apps/v1
-kind: Deployment 
-metadata: 
-  name: i27-eureka-dev
-spec: 
+kind: Deployment
+metadata:
+  name: i27-eureka-app
+  labels:  
+    app: i27-eureka-app   
+spec:
   replicas: 1
   selector:
     matchLabels:
-      name: i27-eureka-dev
+      app: i27-eureka-app
   template:
     metadata:
       labels:
-        name: i27-eureka-dev
+        app: i27-eureka-app
     spec:
       containers:
-        - name: i27-eureka-dev
-        # what image should i place here ????/
-          image: DIT
-          resources:
-            requests: 
-              memory: "128Mi"
-              cpu: "250m"
-            limits: 
-              memory: "256Mi"
-              cpu: "500m"
----
-# Service 
+      - name: i27-eureka-app
+        image: DIT # this will be replaced by shared library
+        ports:
+        - containerPort: 8761
+
+# Service
 apiVersion: v1
-kind: Service
-metadata: 
-  name: i27-eureka-dev
-spec:  
-  selector: 
-    name: i27-eureka-dev
+kind: Service           
+metadata:
+  name: i27-eureka-service
+spec: 
+  selector:
+    app: i27-eureka-app
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8761
+    - protocol: TCP
+      port: 80
+      targetPort: 8761
   type: NodePort
-    
