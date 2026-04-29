@@ -19,8 +19,8 @@ spec:
         image: DIT # this will be replaced by shared library
         ports:
         - containerPort: 8761
-
-# Service
+---
+# Service 
 apiVersion: v1
 kind: Service           
 metadata:
