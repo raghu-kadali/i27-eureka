@@ -33,3 +33,21 @@ spec:
       port: 80
       targetPort: 8761
   type: NodePort
+---
+# Ingress
+apiVersion: networking.k8s.io/v1      
+kind: Ingress
+metadata:
+  name: i27-eureka-ingress    
+  namespace: cart-dev-ns
+spec:
+  rules:
+  - host: eureka-dev.i27academy.com
+    http:
+      paths:
+      - path: /
+        backend:
+          service:
+            name: i27-eureka-service
+            port:
+              number: 80
