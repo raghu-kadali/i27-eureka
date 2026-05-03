@@ -20,36 +20,36 @@ spec:
         ports:
         - containerPort: 8761
 ---
-# # Service 
-# apiVersion: v1
-# kind: Service           
-# metadata:
-#   name: i27-eureka-service
-# spec: 
-#   selector:
-#     app: i27-eureka-app
-#   ports:
-#     - protocol: TCP
-#       port: 80
-#       targetPort: 8761
-#   type: NodePort
-# ---
-# # Ingress
-# apiVersion: networking.k8s.io/v1      
-# kind: Ingress
-# metadata:
-#   name: i27-eureka-ingress    
-#   namespace: cart-dev-ns
-# spec:
-#   rules:
-#   - host: eureka-dev.i27academy.com
-#     http:
-#       paths:
-#       - path: /
-#         pathType: Prefix
-#         backend:
-#           service:
-#             name: i27-eureka-service
-#             port:
-#               number: 80
+# Service 
+apiVersion: v1
+kind: Service           
+metadata:
+  name: i27-eureka-service
+spec: 
+  selector:
+    app: i27-eureka-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8761
+  type: NodePort
+---
+# Ingress
+apiVersion: networking.k8s.io/v1      
+kind: Ingress
+metadata:
+  name: i27-eureka-ingress    
+  namespace: cart-dev-ns
+spec:
+  rules:
+  - host: eureka-dev.i27academy.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: i27-eureka-service
+            port:
+              number: 80
               
