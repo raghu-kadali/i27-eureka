@@ -42,7 +42,7 @@ metadata:
   namespace: cart-dev-ns
 spec:
   rules:
-  - host: eureka-dev.i27academy.com
+  - host: eureka-dev.raghuprojectdevops.in
     http:
       paths:
       - path: /
