@@ -54,4 +54,7 @@ spec:
             name: i27-eureka-service
             port:
               number: 80
-              
+
+
+
+      
