@@ -14,8 +14,8 @@ spec:
       labels:
         app: i27-eureka-app
     spec:
-      imagePullSecrets:  #used to pvt registry to pull the image that kept in scerte like regcred
-        - name = regcred
+      imagePullSecrets:  #used to pvt registry to pull the image that kept in scerte like regcred in thatsecrete jfrog connected information avaible
+        - name = jfrog-secret
       containers:
       - name: i27-eureka-app
         image: DIT # this will be replaced by shared library
