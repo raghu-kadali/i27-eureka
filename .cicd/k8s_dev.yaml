@@ -15,7 +15,7 @@ spec:
         app: i27-eureka-app
     spec:
       imagePullSecrets:  #used to pvt registry to pull the image that kept in scerte like regcred in thatsecrete jfrog connected information avaible
-        - name: jfrog-secret
+        - name: jfrog-secret  # this is the secret name that we created in k8s cluster to pull the image from private registry like jfrog
       containers:
       - name: i27-eureka-app
         image: DIT # this will be replaced by shared library
